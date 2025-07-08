@@ -15,7 +15,7 @@ const sendToQueue = async (data) => {
         await channel.close();
         await connection.close();
     } catch (error) {
-        console.error("❌ RabbitMQ Publisher Error:", error.message);
+        console.error("RabbitMQ Publisher Error:", error.message);
     }
 };
 

@@ -4,7 +4,6 @@ const userController = require("../controllers/userController")
 const multer = require('multer');
 const upload = multer();
 
-/* GET users listing. */
 router.post("/create",upload.none(), userController.createUser)
 
 router.get("/user", userController.getUser)

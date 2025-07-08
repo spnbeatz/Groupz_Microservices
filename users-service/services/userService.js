@@ -29,12 +29,11 @@ const createUser = async (user) => {
             throw new Error(`Błąd API: ${response.status} - ${await response.text()}`);
         }
 
-        const data = await response.json(); // Pobranie ID użytkownika
+        const data = await response.json();
         console.log(data, "fetched data from auth service register");
-        // Tworzymy nowy obiekt użytkownika bez hasła
+
         const { password, ...userWithoutPassword } = { userId: data.data.id, ...user };
 
-        // Zapis do bazy danych
         const newUser = await User.create(userWithoutPassword);
         
         return newUser;
@@ -60,8 +59,8 @@ const getUser = async (id) => {
 
 const getUserBasicData = async (userId) => {
     try {
-        const user = await User.findOne({ _id: userId }) // Szukamy użytkownika po userId
-        .select("_id username avatar status") // Wybieramy tylko potrzebne pola
+        const user = await User.findOne({ _id: userId })
+        .select("_id username avatar status")
         .lean();
 
         if(!user) return null

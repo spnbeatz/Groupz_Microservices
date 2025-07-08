@@ -63,7 +63,7 @@ const getUserBasicData = async (req, res) => {
         console.log(userId, "fetching basic data - userId")
         const data = await userService.getUserBasicData(userId);
         if (!data) {
-            return res.status(404).json({ message: "Couldn't get basic user data" }); // Dodaj `return`
+            return res.status(404).json({ message: "Couldn't get basic user data" });
         }
 
         return res.json(data);
