@@ -9,8 +9,8 @@ const startConsumer = require("./rabbitmq")
 const { Client } = require("elasticsearch");
 
 const esClient = new Client({
-    host: process.env.ELASTICSEARCH_URL, // używaj `host` zamiast `node`
-    log: 'trace' // opcjonalnie, da więcej logów w razie błędu
+    host: process.env.ELASTICSEARCH_URL,
+    log: 'trace' 
   });
   
 startConsumer(esClient);
@@ -37,10 +37,10 @@ app.get("/search", async (req, res) => {
                   bool: {
                       should: [
                           {
-                              wildcard: { username: `*${query}*` }  // Dopasowanie fragmentu w username
+                              wildcard: { username: `*${query}*` }
                           },
                           {
-                              wildcard: { email: `*${query}*` }  // Dopasowanie fragmentu w email
+                              wildcard: { email: `*${query}*` }
                           }
                       ]
                   }
@@ -56,18 +56,17 @@ app.get("/search", async (req, res) => {
   }
 });
 
-// catch 404 and forward to error handler
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   console.log(err);
 });

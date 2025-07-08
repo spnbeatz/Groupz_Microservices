@@ -10,7 +10,7 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 const corsOptions = {
-  origin: '*',  // Adres, z którego może pochodzić zapytanie
+  origin: '*',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 };

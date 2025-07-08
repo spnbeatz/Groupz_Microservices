@@ -65,19 +65,16 @@ const savePostToDatabase = async (post, res) => {
 
 const getPosts = async (req, res) => {
     try {
-        // Konwersja 'limit' na liczbę
-        const limit = parseInt(req.query.limit, 10) || 10; // Jeśli limit nie jest liczbą, to domyślnie 10
-/*         const user = req.query.user || null; // Jeśli user nie jest podany, to null */
+        const limit = parseInt(req.query.limit, 10) || 10;
+
         const skip = parseInt(req.query.skip, 0) || 0;
 
         const userId = req.query.userId || null;
-        // Pobieranie postów z serwisu
         const posts = await postService.getPosts(limit, skip, userId);
 
-        // Zwrócenie postów w odpowiedzi
         res.status(200).json(posts);
     } catch (error) {
-        console.error("Error:", error); // Logowanie błędu
+        console.error("Error:", error);
         res.status(500).json({ message: "Failed to fetch posts" });
     }
 };
