@@ -1,0 +1,190 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "5021:5021"
+    networks:
+      - mynetwork
+    volumes:
+      - ./api-gateway:/app
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/groups
+      - USER_SERVICE_URL=http://users-service:5037
+      - CHATS_SERVICE_URL=http://chat-service:4000
+      - INTERACTIONS_SERVICE_URL=http://interactions-service:4005
+      - POSTS_SERVICE_URL=http://posts-service:4002
+      - NOTIFICATIONS_SERVICE_URL=http://nofitications-service:5000
+      - AUTH_SERVICE_URL=http://auth-service:4010
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mongo
+  chat-service:
+    build:
+      context: ./chat-service
+    ports:
+      - "4000:4000"
+    networks:
+      - mynetwork
+    volumes:
+      - ./chat-service:/app
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/groups
+      - USER_SERVICE_URL=http://users-service:5037
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - users-service
+  file-service:
+    build:
+      context: ./file-service
+    ports:
+      - "4001:4001"
+    networks:
+      - mynetwork
+    volumes:
+      - ./file-service:/app
+    environment:
+      - NODE_ENV=development
+      - APPWRITE_PROJECT_ID=${APPWRITE_PROJECT_ID}
+      - APPWRITE_API_KEY=${APPWRITE_API_KEY}
+      - APPWRITE_BUCKET_ID=${APPWRITE_BUCKET_ID}
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - users-service
+  interactions-service:
+    build:
+      context: ./interactions-service
+    ports:
+      - "4005:4005"
+    networks:
+      - mynetwork
+    volumes:
+      - ./interactions-service:/app
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/groups
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - users-service
+  posts-service:
+    build:
+      context: ./posts-service
+    ports:
+      - "4002:4002"
+    networks:
+      - mynetwork
+    volumes:
+      - ./posts-service:/app
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/groups
+      - FILE_SERVICE_URL=http://file-service:4001
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - users-service
+  users-service:
+    build:
+      context: ./users-service
+    ports:
+      - "5037:5037"
+    networks:
+      - mynetwork
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/groups
+      - AUTH_SERVICE_URL=http://auth-service:4010
+      - RABBITMQ_URL=amqp://rabbitmq
+      - QUEUE_NAME=search_queue
+    command: ["sh", "-c", "/usr/local/bin/wait-for-rabbit.sh && npm start"]
+    depends_on:
+      - rabbitmq
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "4010:4010"
+    networks:
+      - mynetwork
+    environment:
+      - JWT_SECRET=wdqodqodoqmdo1o12eo1mm211mdo1md21med1omd1mmd1
+      - DB_USER=postgres
+      - DB_HOST=postgres
+      - DB_NAME=groups_users
+      - DB_PASSWORD=qwertySPN1!
+      - DB_PORT=5432
+    command: ["sh", "-c", "/usr/local/bin/wait-for-postgres.sh && node ./database/sync.js && npm start"]
+
+    depends_on:
+      - postgres
+  search-service:
+    build: ./search-service
+    ports:
+      - "4011:4011"
+    networks:
+      - mynetwork
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - QUEUE_NAME=search_queue
+    command: ["sh", "-c", "/usr/local/bin/wait-for-rabbit.sh && /usr/local/bin/wait-for-elasticsearch.sh && npm start"]
+
+
+
+    depends_on:
+      - rabbitmq
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwertySPN1!
+      POSTGRES_DB: groups_users
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - mynetwork
+    volumes:
+      - mongo-data:/data/db
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mynetwork
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    networks:
+      - mynetwork
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+volumes:
+  mongo-data:
+  elasticsearch-data:
+  postgres-data:
+networks:
+  mynetwork:
+    driver: bridge
