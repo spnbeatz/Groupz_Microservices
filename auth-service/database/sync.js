@@ -2,7 +2,7 @@
 const sequelize = require('./connect');
 const User = require('./userModel');
 
-sequelize.sync({ force: true })  // force: true usunie i ponownie utworzy tabele
+sequelize.sync({ force: true })
   .then(() => {
     console.log("Database & tables created!");
   })

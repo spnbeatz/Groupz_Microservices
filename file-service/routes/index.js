@@ -3,7 +3,7 @@ var router = express.Router();
 const appwriteApi = require("../appwrite/api");
 const multer = require('multer');
 
-const storageLocal = multer.memoryStorage(); // Przechowujemy pliki w pamięci
+const storageLocal = multer.memoryStorage();
 const upload = multer({ storage: storageLocal });
 
 

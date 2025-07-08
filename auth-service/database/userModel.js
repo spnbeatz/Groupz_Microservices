@@ -18,8 +18,8 @@ const User = sequelize.define('User', {
     allowNull: false,
   }
 }, {
-  timestamps: true,  // Dodaje pola createdAt i updatedAt
-  tableName: 'users', // Opcjonalnie, zmienia nazwę tabeli
+  timestamps: true,
+  tableName: 'users',
 });
 
 module.exports = User;

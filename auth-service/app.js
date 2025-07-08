@@ -10,9 +10,9 @@ const cors = require('cors')
 var app = express();
 
 const corsOptions = {
-  origin: '*', // Zezwól na dostęp z dowolnej domeny/portu
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Dozwolone metody
-  allowedHeaders: ['Content-Type', 'Authorization'], // Dozwolone nagłówki
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 app.use(cors(corsOptions));
@@ -24,18 +24,14 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

@@ -13,7 +13,7 @@ var app = express();
 dotenv.config();
 
 const corsOptions = {
-  origin: '*',  // Adres, z którego może pochodzić zapytanie
+  origin: '*',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 };

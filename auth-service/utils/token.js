@@ -8,8 +8,8 @@ const generateJWT = (user) => {
 
     const jwtToken = jwt.sign(
         { id: user.id, email: user.email },
-        process.env.JWT_SECRET,  // Klucz tajny
-        { expiresIn: "1h", algorithm: "HS256" } // Czas wygaśnięcia i algorytm
+        process.env.JWT_SECRET,
+        { expiresIn: "1h", algorithm: "HS256" }
     );
 
     console.log("Generated token:", jwtToken);

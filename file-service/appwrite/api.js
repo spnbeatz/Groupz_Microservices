@@ -10,11 +10,11 @@ const uploadFile = async (file) => {
         const fileObj = new File([file.buffer], file.originalname, {
             type: file.mimetype
         });
-        // Tworzymy plik w Appwrite
+
         const response = await storage.createFile(
-            process.env.APPWRITE_BUCKET_ID, // ID bucketu
-            "unique()",                     // Generowanie unikalnego ID
-            fileObj                            // Przekazanie obiektu File
+            process.env.APPWRITE_BUCKET_ID,
+            "unique()",                    
+            fileObj                          
         );
         console.log('File uploaded:', response);
         return response;
